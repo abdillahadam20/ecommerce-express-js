@@ -1,22 +1,40 @@
-// controllers/productController.js
-
 const productService = require("../services/productService");
+const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
 
 // Menambahkan produk baru
 const addProduct = async (req, res) => {
   try {
-    const { name, description, price, image_url, categoryId } = req.body;
-    const newProduct = await productService.addProduct(
-      name,
-      description,
-      price,
-      image_url,
-      categoryId
-    );
-    res.status(201).json({
-      message: "Produk berhasil ditambahkan",
-      product: newProduct,
-    });
+    const { name, description, price, categoryId } = req.body;
+    const image = req.file;
+
+    if (image) {
+      const randomName = crypto.randomBytes(16).toString("hex");
+      const extension = path.extname(image.originalname);
+      const target = path.join(
+        __dirname,
+        "../uploads",
+        `${randomName}${extension}`
+      );
+      fs.renameSync(image.path, target);
+
+      const image_url = `http://localhost:3000/uploads/${randomName}${extension}`;
+      const newProduct = await productService.addProduct(
+        name,
+        description,
+        price,
+        image_url,
+        categoryId
+      );
+
+      res.status(201).json({
+        message: "Produk berhasil ditambahkan",
+        product: newProduct,
+      });
+    } else {
+      res.status(400).json({ message: "Image is required" });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -65,10 +83,18 @@ const updateProduct = async (req, res) => {
 const removeProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
-    const removedProduct = await productService.removeProduct(productId);
+    const imageUrl = await productService.removeProduct(productId);
+    const imagePath = path.join(
+      __dirname,
+      "../uploads",
+      path.basename(imageUrl)
+    );
+
+    // Hapus file gambar dari sistem file
+    fs.unlinkSync(imagePath);
+
     res.status(200).json({
       message: "Produk berhasil dihapus",
-      product: removedProduct,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
