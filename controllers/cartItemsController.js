@@ -1,16 +1,25 @@
 const cartItemService = require("../services/cartItemsService");
+const Product = require("../models/Product");
 
 const createCartItem = async (req, res) => {
   try {
-    const { name, qty, price, image_url } = req.body;
+    const { productId, qty } = req.body;
     const userId = req.user._id;
-    const productId = req.params.productId;
 
-    const newCartItem = await cartItemService.createCartItem(
-      userId,
-      productId,
-      { name, qty, price, image_url }
-    );
+    // Ambil detail produk dari database
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Produk tidak ditemukan" });
+    }
+
+    const newCartItem = await cartItemService.createCartItem({
+      name: product.name,
+      qty,
+      price: product.price,
+      image_url: product.image_url,
+      user: userId,
+      product: productId,
+    });
 
     res.status(201).json({
       message: "Item berhasil ditambahkan ke keranjang",
