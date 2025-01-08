@@ -19,7 +19,9 @@ const addProduct = async (req, res) => {
       );
       fs.renameSync(image.path, target);
 
-      const image_url = `http://localhost:3000/uploads/${randomName}${extension}`;
+      const baseUrl =
+        process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+      const image_url = `${baseUrl}/uploads/${randomName}${extension}`;
       const newProduct = await productService.addProduct(
         name,
         description,
