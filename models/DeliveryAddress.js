@@ -13,3 +13,10 @@ const DeliveryAddressSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+const DeliveryAddress = mongoose.model(
+  "DeliveryAddress",
+  DeliveryAddressSchema
+);
+
+module.exports = DeliveryAddress;
