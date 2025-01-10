@@ -10,6 +10,8 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const productRoutes = require("./routes/productRoutes");
 const deliveryRoutes = require("./routes/deliveryRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
+const orderRoutes = require("./routes/orderRoutes");
+const orderStatusRoutes = require("./routes/orderStatusRoutes");
 
 dotenv.config();
 connectDB();
@@ -24,6 +26,8 @@ app.use("/api/cart-items", authMiddleware, cartItemRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/delivery", authMiddleware, deliveryRoutes);
+app.use("/api/orders", authMiddleware, orderRoutes);
+app.use("/api/order-status", authMiddleware, orderStatusRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
