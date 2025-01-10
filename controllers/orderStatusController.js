@@ -27,8 +27,7 @@ const getOrderStatusById = async (req, res) => {
 
 const getAllOrderStatuses = async (req, res) => {
   try {
-    const orderStatuses = await orderStatusService.getAllOrderStatuses();
-
+    const orderStatuses = await OrderStatus.find();
     res.status(200).json({ orderStatuses });
   } catch (error) {
     res.status(500).json({ message: error.message });
