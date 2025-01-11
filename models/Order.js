@@ -12,8 +12,14 @@ const orderItemSchema = new mongoose.Schema({
 const OrderSchema = new mongoose.Schema({
   status: {
     type: String,
-    enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
-    default: "Pending",
+    enum: [
+      "waiting_payment",
+      "processing",
+      "in_delivery",
+      "delivered",
+      "cancelled",
+    ],
+    default: "waiting_payment",
     required: true,
   },
   delivery_fee: { type: Number, required: true },
