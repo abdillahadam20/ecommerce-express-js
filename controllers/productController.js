@@ -1,7 +1,5 @@
 const productService = require("../services/productService");
-const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
+const cloudinary = require("../config/cloudinary");
 
 // Menambahkan produk baru
 const addProduct = async (req, res) => {
@@ -10,16 +8,11 @@ const addProduct = async (req, res) => {
     const image = req.file;
 
     if (image) {
-      const randomName = crypto.randomBytes(16).toString("hex");
-      const extension = path.extname(image.originalname);
-      const target = path.join(
-        __dirname,
-        "../uploads",
-        `${randomName}${extension}`
-      );
-      fs.renameSync(image.path, target);
+      const result = await cloudinary.uploader.upload(image.path, {
+        folder: "uploads",
+      });
 
-      const image_url = `/uploads/${randomName}${extension}`;
+      const image_url = result.secure_url;
       const newProduct = await productService.addProduct(
         name,
         description,
@@ -84,14 +77,10 @@ const removeProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
     const imageUrl = await productService.removeProduct(productId);
-    const imagePath = path.join(
-      __dirname,
-      "../uploads",
-      path.basename(imageUrl)
-    );
+    const publicId = imageUrl.split("/").pop().split(".")[0];
 
-    // Hapus file gambar dari sistem file
-    fs.unlinkSync(imagePath);
+    // Hapus file gambar dari Cloudinary
+    await cloudinary.uploader.destroy(`uploads/${publicId}`);
 
     res.status(200).json({
       message: "Produk berhasil dihapus",
