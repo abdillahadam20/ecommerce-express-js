@@ -2,7 +2,6 @@
 
 const Category = require("../models/Category");
 
-// Menambahkan kategori baru
 const addCategory = async (name) => {
   try {
     const newCategory = new Category({ name });
@@ -13,7 +12,6 @@ const addCategory = async (name) => {
   }
 };
 
-// Mengambil semua kategori
 const getCategories = async () => {
   try {
     const categories = await Category.find();

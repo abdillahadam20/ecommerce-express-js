@@ -6,7 +6,6 @@ const createCartItem = async (req, res) => {
     const { productId, qty } = req.body;
     const userId = req.user._id;
 
-    // Ambil detail produk dari database
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Produk tidak ditemukan" });

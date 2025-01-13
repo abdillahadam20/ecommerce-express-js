@@ -1,8 +1,6 @@
-// services/productService.js
 
 const Product = require("../models/Product");
 
-// Menambahkan produk baru
 const addProduct = async (name, description, price, image_url, categoryId) => {
   try {
     const newProduct = new Product({
@@ -19,7 +17,6 @@ const addProduct = async (name, description, price, image_url, categoryId) => {
   }
 };
 
-// Mengambil semua produk
 const getAllProducts = async () => {
   try {
     const products = await Product.find().populate("category");
@@ -29,7 +26,6 @@ const getAllProducts = async () => {
   }
 };
 
-// Mengambil produk berdasarkan ID
 const getProductById = async (productId) => {
   try {
     const product = await Product.findById(productId).populate("category");
@@ -39,7 +35,6 @@ const getProductById = async (productId) => {
   }
 };
 
-// Mengupdate produk
 const updateProduct = async (productId, updatedData) => {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -53,7 +48,6 @@ const updateProduct = async (productId, updatedData) => {
   }
 };
 
-// Menghapus produk
 const removeProduct = async (productId) => {
   try {
     const product = await Product.findById(productId);

@@ -1,8 +1,5 @@
-// controllers/categoryController.js
-
 const categoryService = require("../services/categoryService");
 
-// Menambahkan kategori baru
 const addCategory = async (req, res) => {
   try {
     const { name } = req.body;
@@ -16,7 +13,6 @@ const addCategory = async (req, res) => {
   }
 };
 
-// Mengambil semua kategori
 const getCategories = async (req, res) => {
   try {
     const categories = await categoryService.getCategories();

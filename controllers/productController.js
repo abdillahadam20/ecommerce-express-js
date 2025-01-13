@@ -1,5 +1,7 @@
 const productService = require("../services/productService");
-const cloudinary = require("../config/cloudinary");
+const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
 
 // Menambahkan produk baru
 const addProduct = async (req, res) => {
@@ -8,11 +10,16 @@ const addProduct = async (req, res) => {
     const image = req.file;
 
     if (image) {
-      const result = await cloudinary.uploader.upload(image.path, {
-        folder: "uploads",
-      });
+      const randomName = crypto.randomBytes(16).toString("hex");
+      const extension = path.extname(image.originalname);
+      const target = path.join(
+        __dirname,
+        "../uploads",
+        `${randomName}${extension}`
+      );
+      fs.renameSync(image.path, target);
 
-      const image_url = result.secure_url;
+      const image_url = `/uploads/${randomName}${extension}`;
       const newProduct = await productService.addProduct(
         name,
         description,
@@ -33,7 +40,6 @@ const addProduct = async (req, res) => {
   }
 };
 
-// Mengambil semua produk
 const getAllProducts = async (req, res) => {
   try {
     const products = await productService.getAllProducts();
@@ -43,7 +49,6 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-// Mengambil produk berdasarkan ID
 const getProductById = async (req, res) => {
   try {
     const productId = req.params.productId;
@@ -54,7 +59,6 @@ const getProductById = async (req, res) => {
   }
 };
 
-// Mengupdate produk
 const updateProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
@@ -72,15 +76,17 @@ const updateProduct = async (req, res) => {
   }
 };
 
-// Menghapus produk
 const removeProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
     const imageUrl = await productService.removeProduct(productId);
-    const publicId = imageUrl.split("/").pop().split(".")[0];
+    const imagePath = path.join(
+      __dirname,
+      "../uploads",
+      path.basename(imageUrl)
+    );
 
-    // Hapus file gambar dari Cloudinary
-    await cloudinary.uploader.destroy(`uploads/${publicId}`);
+    fs.unlinkSync(imagePath);
 
     res.status(200).json({
       message: "Produk berhasil dihapus",
