@@ -16,7 +16,14 @@ const orderStatusRoutes = require("./routes/orderStatusRoutes");
 dotenv.config();
 connectDB();
 
-app.use(cors());
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "https://ecommerce-react-js-seven.vercel.app", // Domain yang diizinkan
+    methods: ["GET", "POST", "PUT", "DELETE"], // Metode yang diizinkan
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
