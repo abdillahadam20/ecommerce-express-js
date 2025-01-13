@@ -1,22 +1,23 @@
-// routes/productRoutes.js
-
 const express = require("express");
 const router = express.Router();
 const productController = require("../controllers/productController");
+const upload = require("../middleware/multerMiddleware");
+const authMiddleware = require("../middleware/authMiddleware");
 
-// Menambahkan produk baru
-router.post("/", productController.addProduct);
-
-// Mengambil semua produk
+router.post(
+  "/",
+  authMiddleware,
+  upload.single("image"),
+  productController.addProduct
+);
 router.get("/", productController.getAllProducts);
-
-// Mengambil produk berdasarkan ID
 router.get("/:productId", productController.getProductById);
-
-// Mengupdate produk
-router.put("/:productId", productController.updateProduct);
-
-// Menghapus produk
-router.delete("/:productId", productController.removeProduct);
+router.put(
+  "/:productId",
+  authMiddleware,
+  upload.single("image"),
+  productController.updateProduct
+);
+router.delete("/:productId", authMiddleware, productController.removeProduct);
 
 module.exports = router;

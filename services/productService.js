@@ -56,8 +56,12 @@ const updateProduct = async (productId, updatedData) => {
 // Menghapus produk
 const removeProduct = async (productId) => {
   try {
-    const deletedProduct = await Product.findByIdAndDelete(productId);
-    return deletedProduct;
+    const product = await Product.findById(productId);
+    if (!product) {
+      throw new Error("Produk tidak ditemukan");
+    }
+    await Product.findByIdAndDelete(productId);
+    return product.image_url;
   } catch (error) {
     throw new Error("Gagal menghapus produk: " + error.message);
   }
