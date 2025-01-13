@@ -16,14 +16,22 @@ const orderStatusRoutes = require("./routes/orderStatusRoutes");
 dotenv.config();
 connectDB();
 
-const cors = require("cors");
+const allowedOrigins = [
+  "https://ecommerce-react-js-seven.vercel.app",
+  "http://localhost:3000",
+];
+
 app.use(
   cors({
-    origin: "https://ecommerce-react-js-seven.vercel.app", // Domain yang diizinkan
-    methods: ["GET", "POST", "PUT", "DELETE"], // Metode yang diizinkan
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
   })
 );
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
