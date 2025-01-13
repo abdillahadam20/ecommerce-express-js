@@ -7,7 +7,6 @@ const categoryController = require("../controllers/categoryController");
 // Menambahkan kategori baru
 router.post("/", categoryController.addCategory);
 
-// Mengambil semua kategori
 router.get("/", categoryController.getCategories);
 
 module.exports = router;
